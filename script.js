@@ -1,8 +1,9 @@
 const attrs = {
+    startDraw: false,
     container: document.querySelector(".container"),
-    nrows: 16, 
-    ncols: 16,
-    cellSize: 16,
+    nrows: 18, 
+    ncols: 18,
+    cellSize: 25,
     cellColor: "#fff",
     fieldStartX: null,
     fieldStartY: null,
@@ -16,7 +17,6 @@ function createField() {
         parent.style.display = "flex";
         parent.setAttribute("class", "parent");
 
-    
         for (let j = 0; j < attrs.ncols; j++) {
             const child = document.createElement("div");
             child.style.height = `${attrs.cellSize}px`;
@@ -39,15 +39,35 @@ function updateFieldPosition() {
 }
 
 function drawPixel(event) {
+    if (!attrs.startDraw)
+        return;
+
     event.preventDefault();
     updateFieldPosition();
+
     const x = event.clientX;
     const y = event.clientY;
+    if (
+        x > attrs.fieldStartX + attrs.fieldWidth  ||
+        y > attrs.fieldStartY + attrs.fieldHeight ||
+        x < attrs.fieldStartX ||
+        y < attrs.fieldStartY
+    )
+        return;
+
     const cellX = Math.floor((x-attrs.fieldStartX)/attrs.cellSize); 
     const cellY = Math.floor((y-attrs.fieldStartY)/attrs.cellSize);
     attrs.container.children[cellY].
         children[cellX].
         style.backgroundColor = "red";
 }
+
+document.body.addEventListener('mousedown', () => {
+    attrs.startDraw = true;
+})
+
+document.body.addEventListener('mouseup', () => {
+    attrs.startDraw = false;
+})
 
 createField();

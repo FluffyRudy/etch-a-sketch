@@ -28,7 +28,3 @@ This project is currently complete and no further updates are planned.
 ## Acknowledgements
 
 This project is part of The Odin Project's curriculum.
-
-## License
-
-This project is open source and available under the MIT License.

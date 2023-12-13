@@ -10,7 +10,6 @@ const attrs = {
     nrows: initAttrs.NROWS, 
     ncols: initAttrs.NCOLS,
     cellSize: initAttrs.container.clientWidth/initAttrs.NROWS,
-    cellColor: "#fff",
     fieldStartX: initAttrs.container.getBoundingClientRect().left,
     fieldStartY: initAttrs.container.getBoundingClientRect().top,
     fieldWidth: initAttrs.container.clientWidth,
@@ -44,7 +43,7 @@ function updateSize(size) {
     attrs.nrows = size;
     attrs.ncols = size;
     attrs.cellSize = attrs.fieldWidth / attrs.ncols;
-    document.getElementById('grid-size').textContent = `${parseInt(size)}`;
+    document.getElementById('grid-size').textContent = `${size}X${size}`;
 
     createField()
 }
@@ -81,12 +80,25 @@ function openColoPicker() {
     })
 }
 
+function randomColor() {
+    const hexcodes = "0123456789abcdef";
+    res = '';
+
+    for (let i = 0; i < 6; i++) {
+        res += hexcodes[Math.floor(Math.random() * hexcodes.length)];
+    }
+
+    return "#"+res;
+}
+
 attrs.container.addEventListener('mousedown', (e) => {
     e.preventDefault();
     attrs.startDraw = true;
 })
 
 attrs.container.addEventListener("mousemove", (e) => {
+    if (document.getElementById('multi-color').classList.contains('active'))
+        attrs.color = attrs.previousColor = randomColor();
     drawPixel(e);
 })
 
@@ -110,8 +122,12 @@ document.getElementById('tools').onmouseup = (e) => {
         updateSize(parseInt(e.target.value));
     else if(e.target.classList.contains('clear'))
         updateSize(parseInt(attrs.ncols));
-    else if (e.target.classList.contains('eraser'))
+    else if (e.target.classList.contains('eraser')) {
         attrs.color = "#fff";
+        document.getElementById('multi-color').classList.toggle('active');
+    }
+    else if (e.target.classList.contains('random-color'))
+        e.target.classList.toggle('active');
     else if (e.target.classList.contains('color-chooser'))
         openColoPicker();
 }

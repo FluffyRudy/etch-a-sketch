@@ -98,13 +98,16 @@ attrs.container.addEventListener('mousedown', (e) => {
 
 attrs.container.addEventListener("mousemove", (e) => {
     if (document.getElementById('multi-color').classList.contains('active'))
-        attrs.color = attrs.previousColor = randomColor();
+        attrs.color = randomColor();
     drawPixel(e);
 })
 
 attrs.container.addEventListener('mouseup', () => {
     attrs.startDraw = false;
     attrs.color = attrs.previousColor;
+    if (document.getElementById('multi-color').classList.contains('active')) {
+      document.getElementById('multi-color').classList.toggle('active');
+    }
 })
 
 attrs.container.addEventListener('mouseleave', () => {
@@ -122,12 +125,12 @@ document.getElementById('tools').onmouseup = (e) => {
         updateSize(parseInt(e.target.value));
     else if(e.target.classList.contains('clear'))
         updateSize(parseInt(attrs.ncols));
-    else if (e.target.classList.contains('eraser')) {
+    else if (e.target.classList.contains('eraser'))
         attrs.color = "#fff";
-        document.getElementById('multi-color').classList.toggle('active');
-    }
-    else if (e.target.classList.contains('random-color'))
+    else if (e.target.classList.contains('random-color')) {
         e.target.classList.toggle('active');
+        
+    }
     else if (e.target.classList.contains('color-chooser'))
         openColoPicker();
 }

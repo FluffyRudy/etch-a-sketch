@@ -99,9 +99,13 @@ attrs.container.addEventListener('mouseleave', () => {
     attrs.startDraw = false;
 })
 
+document.getElementById('slider').addEventListener('mouseup', (e) => {
+    updateSize(parseInt(e.target.value));
+})
+
 document.getElementById('tools').onmouseup = (e) => {
     if (e.target.nodeName == 'INPUT')
-        ;
+        return;
     else if (e.target.value)
         updateSize(parseInt(e.target.value));
     else if(e.target.classList.contains('clear'))
@@ -109,7 +113,7 @@ document.getElementById('tools').onmouseup = (e) => {
     else if (e.target.classList.contains('eraser'))
         attrs.color = "#fff";
     else if (e.target.classList.contains('color-chooser'))
-        openColoPicker()
+        openColoPicker();
 }
 
 window.addEventListener('resize', () => {

@@ -6,7 +6,17 @@
     <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
-<body onmousemove="drawPixel(event)">
+<body>
+    <div id="tools">
+        <button class="color-chooser">color</button>
+        <button class="random-color">Random Color</button>
+        <button class="eraser">Eraser</button>
+        <button class="clear">Clear</button>
+        <div class="slider">
+            <p id="grid-size">16</p>
+            <input type="range" name="slider" id="slider" min="1" max="100" value="16" step="1">
+        </div>
+        </div>
     <div class="container">
         
     </div>

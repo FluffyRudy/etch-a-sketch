@@ -1,14 +1,22 @@
+const initAttrs = {
+    container:  document.querySelector(".container"),
+    NROWS: 16,
+    NCOLS: 16,
+};
+
 const attrs = {
     startDraw: false,
-    container: document.querySelector(".container"),
-    nrows: 18, 
-    ncols: 18,
-    cellSize: 25,
+    container: initAttrs.container,
+    nrows: initAttrs.NROWS, 
+    ncols: initAttrs.NCOLS,
+    cellSize: initAttrs.container.clientWidth/initAttrs.NROWS,
     cellColor: "#fff",
-    fieldStartX: null,
-    fieldStartY: null,
-    fieldWidth: null,
-    fieldHeight: null
+    fieldStartX: initAttrs.container.getBoundingClientRect().left,
+    fieldStartY: initAttrs.container.getBoundingClientRect().top,
+    fieldWidth: initAttrs.container.clientWidth,
+    fieldHeight: initAttrs.container.clientHeight,
+    color: '#f00',
+    previousColor: '#f00'
 };
 
 function createField() {
@@ -29,22 +37,22 @@ function createField() {
     }
 }
 
-function updateFieldPosition() {
-    const boundRect = attrs.container.children[0].
-                      getBoundingClientRect();
-    attrs.fieldStartX = boundRect.x;
-    attrs.fieldStartY = boundRect.y;
-    attrs.fieldWidth  = attrs.nrows * attrs.cellSize;
-    attrs.fieldHeight = attrs.ncols * attrs.cellSize;
+function updateSize(size) {
+    while (attrs.container.firstChild) {
+        attrs.container.removeChild(attrs.container.lastChild);
+    }
+    attrs.nrows = size;
+    attrs.ncols = size;
+    attrs.cellSize = attrs.fieldWidth / attrs.ncols;
+    document.getElementById('grid-size').textContent = `${parseInt(size)}`;
+
+    createField()
 }
 
 function drawPixel(event) {
     if (!attrs.startDraw)
         return;
-
-    event.preventDefault();
-    updateFieldPosition();
-
+    
     const x = event.clientX;
     const y = event.clientY;
     if (
@@ -59,15 +67,56 @@ function drawPixel(event) {
     const cellY = Math.floor((y-attrs.fieldStartY)/attrs.cellSize);
     attrs.container.children[cellY].
         children[cellX].
-        style.backgroundColor = "red";
+        style.backgroundColor = attrs.color;
 }
 
-document.body.addEventListener('mousedown', () => {
+function openColoPicker() {
+    const colorElem = document.createElement('input');
+    colorElem.setAttribute('type', 'color');
+    colorElem.setAttribute('value', attrs.color);
+    colorElem.click();
+    colorElem.addEventListener('change', function() {
+        attrs.color = this.value;
+        attrs.previousColor = this.value;
+    })
+}
+
+attrs.container.addEventListener('mousedown', (e) => {
+    e.preventDefault();
     attrs.startDraw = true;
 })
 
-document.body.addEventListener('mouseup', () => {
+attrs.container.addEventListener("mousemove", (e) => {
+    drawPixel(e);
+})
+
+attrs.container.addEventListener('mouseup', () => {
+    attrs.startDraw = false;
+    attrs.color = attrs.previousColor;
+})
+
+attrs.container.addEventListener('mouseleave', () => {
     attrs.startDraw = false;
 })
 
-createField();
+document.getElementById('tools').onmouseup = (e) => {
+    if (e.target.nodeName == 'INPUT')
+        ;
+    else if (e.target.value)
+        updateSize(parseInt(e.target.value));
+    else if(e.target.classList.contains('clear'))
+        updateSize(parseInt(attrs.ncols));
+    else if (e.target.classList.contains('eraser'))
+        attrs.color = "#fff";
+    else if (e.target.classList.contains('color-chooser'))
+        openColoPicker()
+}
+
+window.addEventListener('resize', () => {
+    attrs.fieldStartX = attrs.container.getBoundingClientRect().left,
+    attrs.fieldStartY = attrs.container.getBoundingClientRect().top
+})
+
+window.onload = () => {
+    createField();
+}
